@@ -25,6 +25,18 @@ app.use('/api/drivers', driversRouter);
 const assignmentsRoutes = require('./routes/assignments');
 app.use('/api/assignments', assignmentsRoutes);
 
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
+
+const notificationRoutes = require('./routes/notifications');
+app.use('/api/notifications', notificationRoutes);
+
+
+const passengerRoutes = require('./routes/passenger');
+// app.use('/api/passenger', passengerAnalyticsRoutes);
+app.use("/passenger", passengerRoutes);
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

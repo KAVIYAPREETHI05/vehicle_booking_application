@@ -12,6 +12,8 @@ const DriverSidebar = () => {
         <li><Link to={`/users/drivers/request`}>Ride Requests</Link></li>
         <li><Link to={`/users/drivers/${driverID}/accepted`}>Accepted Rides</Link></li>
         <li><Link to={`/users/drivers/${driverID}/completed`}>Completed Rides</Link></li>
+        <li><Link to={`/users/drivers/${driverID}/notification`}>Notifications</Link></li>
+
       </ul>
     </div>
   );

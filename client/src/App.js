@@ -7,7 +7,7 @@ import MainLayout from "./components/MainLayout";
 import PassengerDashboard from "./pages/passenger/PassengerDashboard";
 import BookVehicle from "./pages/passenger/BookVehicle";
 import RequestStatus from "./pages/passenger/RequestStatus";
-import ContactSupport from "./pages/passenger/ContactSupport";
+import ContactSupport from "./pages/passenger/ContactPage";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AddVehicle from "./pages/admin/AddVehicle";
@@ -19,6 +19,7 @@ import DriverDashboard from "./pages/driver/DriverDashboard";
 import CompletedRides from "./pages/driver/CompletedRides";
 import RideRequest from "./pages/driver/RideRequests";
 import AccepteRides from "./pages/driver/AcceptedRides";
+import Notification from "./pages/driver/Notifications";
 
 import './App.css';
 
@@ -55,6 +56,7 @@ function App() {
           <Route path="/users/drivers/:driverID/accepted" element={<AccepteRides />} />
           <Route path="/users/drivers/:driverID/Completed" element={<CompletedRides />} />
           <Route path="/users/drivers/request" element={<RideRequest />} />
+          <Route path="/users/drivers/:driverID/notification" element={<Notification />} />
 
           {/* Add other driver routes here */}
           </Route>

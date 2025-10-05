@@ -19,6 +19,40 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET; // 🔐 Store securely via env in production
 
 // --- SIGNUP ---
+// router.post("/signup", async (req, res) => {
+//   const { email, password, role } = req.body;
+
+//   if (!email.endsWith("@bitsathy.ac.in")) {
+//     return res.status(400).json({ message: "Only @bitsathy.ac.in allowed." });
+//   }
+
+//   try {
+//     // ✅ Check for duplicate email
+//     const existing = await query("SELECT * FROM users WHERE email = ?", [email]);
+
+//     if (existing.length > 0) {
+//       return res.status(409).json({ message: "User already exists." });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // ✅ Generate role-based ID
+//     let prefix = role === "admin" ? "admin" : role === "driver" ? "driver" : "pass";
+//     const id = prefix + Math.floor(100 + Math.random() * 900); // e.g., pass123
+
+//     await query(
+//       "INSERT INTO users (generated_id, email, password, role) VALUES (?, ?, ?, ?)",
+//       [id, email, hashedPassword, role]
+//     );
+
+//     res.status(201).json({ message: "User created", generatedId: id });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Signup failed" });
+//   }
+// });
+
+
 router.post("/signup", async (req, res) => {
   const { email, password, role } = req.body;
 
@@ -27,11 +61,22 @@ router.post("/signup", async (req, res) => {
   }
 
   try {
-    // ✅ Check for duplicate email
+    // ✅ Check for duplicate email in users table
     const existing = await query("SELECT * FROM users WHERE email = ?", [email]);
 
     if (existing.length > 0) {
       return res.status(409).json({ message: "User already exists." });
+    }
+
+    // ✅ NEW: Check if driver email exists in drivers table for driver role
+    if (role === "driver") {
+      const driverExists = await query("SELECT * FROM drivers WHERE email = ?", [email]);
+      
+      if (driverExists.length === 0) {
+        return res.status(403).json({ 
+          message: "Driver registration not allowed. Your email is not registered in drivers database." 
+        });
+      }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,7 +96,6 @@ router.post("/signup", async (req, res) => {
     res.status(500).json({ message: "Signup failed" });
   }
 });
-
 
 // --- LOGIN ---
 router.post("/login", async (req, res) => {

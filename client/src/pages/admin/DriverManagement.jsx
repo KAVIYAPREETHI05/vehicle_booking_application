@@ -1,8 +1,7 @@
 // /src/pages/admin/DriverManagement.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../../css/formStyle.css";
-import "../../css/tableStyle.css";
+import "../../css/DriverManagement.css"; // Import the scoped CSS
 
 const DriverManagement = () => {
   const [drivers, setDrivers] = useState([]);
@@ -14,8 +13,8 @@ const DriverManagement = () => {
     experience: "",
     status: "available",
   });
+  const [loading, setLoading] = useState(false);
 
-  // Initial form state for reset
   const initialFormState = {
     name: "",
     email: "",
@@ -24,46 +23,71 @@ const DriverManagement = () => {
     status: "available",
   };
 
-  // Fetch drivers on component mount
   useEffect(() => {
     fetchDrivers();
   }, []);
 
-
-const fetchDrivers = async () => {
-  try {
-    const res = await axios.get("http://localhost:5000/api/drivers");
-    console.log("API Response:", res.data); // <-- Check what this actually is
-    setDrivers(res.data);
-  } catch (err) {
-    console.error("Error fetching drivers:", err);
-    setDrivers([]); // fallback to empty array
-  }
-};
+  const fetchDrivers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/drivers");
+      setDrivers(res.data);
+    } catch (err) {
+      console.error("Error fetching drivers:", err);
+      alert(`Failed to load drivers: ${err.message}`);
+      setDrivers([]);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "phone" && !/^\d*$/.test(value)) return; // Only numbers for phone
-    if (name === "experience" && !/^\d*$/.test(value)) return; // Only numbers for experience
+    if (name === "phone" && !/^\d*$/.test(value)) return;
+    if (name === "experience" && !/^\d*$/.test(value)) return;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    
     try {
+      const driverData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        experience: parseInt(formData.experience) || 0,
+        status: formData.status
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/drivers", 
+        driverData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
       
-      const response = await axios.post("http://localhost:5000/api/drivers", {
-        ...formData,
-        experience: parseInt(formData.experience) || 0 // Ensure number with fallback
-      });
-      
-      alert(`Driver added! ID: ${response.data.driver_id}`);
+      alert(`Driver added successfully! ID: ${response.data.driverId}`);
       setIsModalOpen(false);
       setFormData(initialFormState);
       fetchDrivers();
+      
     } catch (error) {
       console.error("Error adding driver:", error);
-      alert(`Error: ${error.response?.data?.message || error.message}`);
+      let errorMessage = "Failed to add driver";
+      
+      if (error.response) {
+        errorMessage = error.response.data?.message || error.response.data?.error || `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        errorMessage = "No response from server. Check if backend is running.";
+      } else {
+        errorMessage = error.message;
+      }
+      
+      alert(`Error: ${errorMessage}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,30 +116,29 @@ const fetchDrivers = async () => {
     }
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setFormData(initialFormState);
+  };
+
   return (
-    <div className="dashboard-layout">
       <div className="main-content">
         <div className="table-container">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="table-header">
             <h2>Driver Management</h2>
             <button
-              className="add-button"
-              onClick={() => setIsModalOpen(true)}
-              style={{
-                backgroundColor: "#0066cc",
-                color: "white",
-                padding: "10px 15px",
-                borderRadius: "8px",
-                border: "none",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
+              className="add-driver-btn"
+              onClick={handleOpenModal}
             >
               + Add Driver
             </button>
           </div>
 
-          <table>
+          <table className="drivers-table">
             <thead>
               <tr>
                 <th>Driver ID</th>
@@ -128,130 +151,171 @@ const fetchDrivers = async () => {
               </tr>
             </thead>
             <tbody>
-{Array.isArray(drivers) && drivers.map(driver => (
-                <tr key={driver.driver_id}>
-                  <td>{driver.driver_id}</td>
-                  <td>{driver.name}</td>
-                  <td>{driver.email}</td>
-                  <td>{driver.phone}</td>
-                  <td>{driver.experience}</td>
-                  <td>
-                    <select
-                      value={driver.status}
-                      onChange={(e) => handleStatusChange(driver.driver_id, e.target.value)}
-                      className="status-select"
-                    >
-                      <option value="on_duty">Available</option>
-                      <option value="on_duty">Unavailable</option>
-                      <option value="on_leave">On Leave</option>
-                      <option value="suspended">Suspended</option>
-                      <option value="terminated">Terminated</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button
-                      style={{
-                        backgroundColor: "#ff4d4f",
-                        color: "white",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => {  console.log('Deleting driver with id:', driver.driver_id); handleDeleteDriver(driver.driver_id)}}
-                    >
-                      Delete
-                    </button>
+              {Array.isArray(drivers) && drivers.length > 0 ? (
+                drivers.map(driver => (
+                  <tr key={driver.driver_id}>
+                    <td>{driver.driver_id}</td>
+                    <td>{driver.name}</td>
+                    <td>{driver.email}</td>
+                    <td>{driver.phone}</td>
+                    <td>{driver.experience}</td>
+                    <td>
+                      <select
+                        value={driver.status}
+                        onChange={(e) => handleStatusChange(driver.driver_id, e.target.value)}
+                        className="driver-status-select"
+                      >
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                        <option value="on_leave">On Leave</option>
+                        <option value="suspended">Suspended</option>
+                        <option value="terminated">Terminated</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button
+                        className="driver-delete-btn"
+                        onClick={() => handleDeleteDriver(driver.driver_id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="driver-empty-state">
+                    No drivers found. Click "Add Driver" to create one.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Add Driver Modal */}
         {isModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <div className="form-container">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <h2>Add New Driver</h2>
+          <div className="driver-modal-overlay" onClick={handleCloseModal}>
+            <div className="driver-modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="driver-form-container">
+                <div style={{ 
+                  display: "flex", 
+                  justifyContent: "space-between", 
+                  alignItems: "center",
+                  marginBottom: "20px"
+                }}>
+                  <h2 style={{ margin: 0 }}>Add New Driver</h2>
                   <button
-                    onClick={() => setIsModalOpen(false)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      fontSize: "20px",
-                      cursor: "pointer",
-                      color: "#666",
-                    }}
+                    onClick={handleCloseModal}
+                    className="driver-modal-close"
                   >
                     ×
                   </button>
                 </div>
+                
                 <form onSubmit={handleSubmit}>
-                  <label>Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    minLength="2"
-                  />
+                  <div className="driver-form-group">
+                    <label htmlFor="name">Full Name *</label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      minLength="2"
+                      placeholder="Enter driver's full name"
+                      disabled={loading}
+                    />
+                  </div>
 
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
+                  <div className="driver-form-group">
+                    <label htmlFor="email">Email *</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      placeholder="Enter email address"
+                      disabled={loading}
+                    />
+                  </div>
 
-                  <label>Phone Number</label>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    maxLength="10"
-                    minLength="10"
-                    pattern="\d{10}"
-                  />
+                  <div className="driver-form-group">
+                    <label htmlFor="phone">Phone Number *</label>
+                    <input
+                      type="text"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      maxLength="10"
+                      minLength="10"
+                      pattern="\d{10}"
+                      placeholder="Enter 10-digit phone number"
+                      disabled={loading}
+                    />
+                  </div>
 
-                  <label>Experience (years)</label>
-                  <input
-                    type="number"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    required
-                    min="0"
-                    max="50"
-                  />
+                  <div className="driver-form-group">
+                    <label htmlFor="experience">Experience (years) *</label>
+                    <input
+                      type="number"
+                      id="experience"
+                      name="experience"
+                      value={formData.experience}
+                      onChange={handleChange}
+                      required
+                      min="0"
+                      max="50"
+                      placeholder="Enter years of experience"
+                      disabled={loading}
+                    />
+                  </div>
 
-                  <label>Status</label>
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="on_duty">On Duty</option>
-                    <option value="on_leave">On Leave</option>
-                    <option value="suspended">Suspended</option>
-                    <option value="terminated">Terminated</option>
-                  </select>
+                  <div className="driver-form-group">
+                    <label htmlFor="status">Status *</label>
+                    <select
+                      id="status"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                      required
+                      disabled={loading}
+                    >
+                      <option value="available">Available</option>
+                      <option value="unavailable">Unavailable</option>
+                      <option value="on_leave">On Leave</option>
+                      <option value="suspended">Suspended</option>
+                      <option value="terminated">Terminated</option>
+                    </select>
+                  </div>
 
-                  <button type="submit">Add Driver</button>
+                  <div className="driver-form-actions">
+                    <button 
+                      type="button" 
+                      onClick={handleCloseModal}
+                      className="driver-btn-secondary"
+                      disabled={loading}
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" 
+                      className="driver-btn-primary"
+                      disabled={loading}
+                    >
+                      {loading ? "Adding..." : "Add Driver"}
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 };

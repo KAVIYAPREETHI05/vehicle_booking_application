@@ -11,15 +11,39 @@ const AddVehicle = () => {
     capacity: "",
     status: "Available",
   });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "vehicleId" && !/^\d*$/.test(value)) return; // Only numbers
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({...errors, [name]: ""});
+    }
+    
     setFormData({ ...formData, [name]: value });
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.vehicleId.trim()) newErrors.vehicleId = "Vehicle ID is required";
+    if (!formData.vehicleType.trim()) newErrors.vehicleType = "Vehicle Type is required";
+    if (!formData.vehicleNumber.trim()) newErrors.vehicleNumber = "Vehicle Number is required";
+    if (!formData.capacity) newErrors.capacity = "Please select capacity";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
     try {
       await axios.post("http://localhost:5000/api/vehicles/add", formData);
       alert("Vehicle added successfully!");
@@ -32,7 +56,9 @@ const AddVehicle = () => {
       });
     } catch (error) {
       console.error("Error adding vehicle:", error);
-      alert("Failed to add vehicle.");
+      alert("Failed to add vehicle. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -40,50 +66,84 @@ const AddVehicle = () => {
     <div className="form-container">
       <h2>Add Vehicle</h2>
       <form onSubmit={handleSubmit}>
-        <label>Vehicle ID</label>
-        <input
-          type="text"
-          name="vehicleId"
-          value={formData.vehicleId}
-          onChange={handleChange}
-          required
-        />
+        <div className="form-group">
+          <label htmlFor="vehicleId">Vehicle ID</label>
+          <input
+            type="text"
+            id="vehicleId"
+            name="vehicleId"
+            value={formData.vehicleId}
+            onChange={handleChange}
+            className={errors.vehicleId ? "error" : ""}
+            required
+          />
+          {errors.vehicleId && <span className="error-message">{errors.vehicleId}</span>}
+        </div>
 
-        <label>Vehicle Type</label>
-        <input
-          type="text"
-          name="vehicleType"
-          value={formData.vehicleType}
-          onChange={handleChange}
-          required
-        />
+        <div className="form-group">
+          <label htmlFor="vehicleType">Vehicle Type</label>
+          <input
+            type="text"
+            id="vehicleType"
+            name="vehicleType"
+            value={formData.vehicleType}
+            onChange={handleChange}
+            className={errors.vehicleType ? "error" : ""}
+            required
+          />
+          {errors.vehicleType && <span className="error-message">{errors.vehicleType}</span>}
+        </div>
 
-        <label>Vehicle Number</label>
-        <input
-          type="text"
-          name="vehicleNumber"
-          value={formData.vehicleNumber}
-          onChange={handleChange}
-          required
-        />
+        <div className="form-group">
+          <label htmlFor="vehicleNumber">Vehicle Number</label>
+          <input
+            type="text"
+            id="vehicleNumber"
+            name="vehicleNumber"
+            value={formData.vehicleNumber}
+            onChange={handleChange}
+            className={errors.vehicleNumber ? "error" : ""}
+            required
+          />
+          {errors.vehicleNumber && <span className="error-message">{errors.vehicleNumber}</span>}
+        </div>
 
-        <label>Capacity</label>
-        <select name="capacity" value={formData.capacity} onChange={handleChange} required>
-          <option value="">Select Capacity</option>
-          {[...Array(20)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {i + 1}
-            </option>
-          ))}
-        </select>
+        <div className="form-group">
+          <label htmlFor="capacity">Capacity</label>
+          <select 
+            id="capacity"
+            name="capacity" 
+            value={formData.capacity} 
+            onChange={handleChange} 
+            className={errors.capacity ? "error" : ""}
+            required
+          >
+            <option value="">Select Capacity</option>
+            {[...Array(20)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1} {i === 0 ? "person" : "people"}
+              </option>
+            ))}
+          </select>
+          {errors.capacity && <span className="error-message">{errors.capacity}</span>}
+        </div>
 
-        <label>Status</label>
-        <select name="status" value={formData.status} onChange={handleChange}>
-          <option value="Available">Available</option>
-          <option value="Unavailable">Unavailable</option>
-        </select>
+        <div className="form-group">
+          <label htmlFor="status">Status</label>
+          <select 
+            id="status"
+            name="status" 
+            value={formData.status} 
+            onChange={handleChange}
+          >
+            <option value="Available">Available</option>
+            <option value="Unavailable">Unavailable</option>
+          </select>
+        </div>
 
-        <button type="submit">Add Vehicle</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Adding Vehicle..." : "Add Vehicle"}
+        </button>
       </form>
     </div>
   );

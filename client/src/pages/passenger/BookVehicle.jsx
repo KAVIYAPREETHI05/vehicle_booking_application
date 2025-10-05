@@ -9,7 +9,6 @@ const BookVehicle = () => {
   
   const [vehicleList, setVehicleList] = useState([]);
   const [formData, setFormData] = useState({
-    vehicleId: "",
     place: "",
     hour: "",
     minute: "",
@@ -38,13 +37,12 @@ const BookVehicle = () => {
   const passengerID = localStorage.getItem("passID");
   const time = `${formData.hour}:${formData.minute}`;
 
-  if (!passengerID || !formData.vehicleId || !formData.place || !formData.hour || !formData.minute || !formData.reason) {
+  if (!passengerID || !formData.place || !formData.hour || !formData.minute || !formData.reason) {
     alert("All fields are required");
     return;
   }
 
   const bookingPayload = {
-    vehicleId: formData.vehicleId,
     place: formData.place,
     time: time,
     reason: formData.reason,
@@ -57,7 +55,6 @@ const BookVehicle = () => {
     await axios.post("http://localhost:5000/api/bookings/book", bookingPayload);
     alert("Vehicle booked successfully!");
     setFormData({
-      vehicleId: "",
       place: "",
       hour: "",
       minute: "",
@@ -68,7 +65,6 @@ const BookVehicle = () => {
     alert(err.response?.data?.error || "Booking failed.");
   }
 };
-
 
   useEffect(() => {
     const fetchAvailableVehicles = async () => {
@@ -86,16 +82,6 @@ const BookVehicle = () => {
     <div className="form-container">
       <h2>Book Vehicle</h2>
       <form onSubmit={handleSubmit}>
-        <label>Vehicle ID</label>
-        <select name="vehicleId" value={formData.vehicleId} onChange={handleChange} required>
-          <option value="">Select Vehicle</option>
-          {vehicleList.map((vehicle) => (
-            <option key={vehicle.vehicleId} value={vehicle.vehicleId}>
-              {vehicle.vehicleId}
-            </option>
-          ))}
-        </select>
-
         <label>Pickup Place</label>
         <select name="place" value={formData.place} onChange={handleChange} required>
           <option value="">Select Place</option>

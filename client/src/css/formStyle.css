@@ -1,43 +1,142 @@
+/* /src/css/formStyle.css */
 .form-container {
-  width: 400px;
-  margin: 40px auto;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  background: #f9f9f9;
+  width: 100%;
+  max-width: 440px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f0f0f0;
 }
 
 .form-container h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  color: #1a1a1a;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
 }
 
 .form-container label {
-  font-weight: bold;
+  font-weight: 600;
   display: block;
-  margin-top: 12px;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-size: 0.9rem;
 }
 
 .form-container select,
 .form-container textarea,
-.form-container input,
+.form-container input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #1f2937;
+  box-sizing: border-box;
+}
+
+.form-container select:focus,
+.form-container textarea:focus,
+.form-container input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-container select:hover,
+.form-container textarea:hover,
+.form-container input:hover {
+  border-color: #9ca3af;
+}
+
+.form-container textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
 .form-container button {
   width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.form-container button {
-  background-color: #0066cc;
+  padding: 1rem;
+  background: linear-gradient(135deg, #0066cc 0%, #0052b3 100%);
   color: white;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
-  margin-top: 15px;
-  transition: 0.3s;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  letter-spacing: 0.02em;
 }
 
-.form-container button:hover {
-  background-color: #004c99;
+.form-container button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0052b3 0%, #004099 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+.form-container button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 102, 204, 0.2);
+}
+
+.form-container button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Focus states for accessibility */
+.form-container select:focus-visible,
+.form-container textarea:focus-visible,
+.form-container input:focus-visible,
+.form-container button:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+/* Error state styling */
+.form-container .error {
+  border-color: #ef4444 !important;
+}
+
+.form-container .error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .form-container {
+    margin: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+  
+  .form-container h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Optional: Add some micro-interactions */
+.form-container select,
+.form-container input,
+.form-container textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
