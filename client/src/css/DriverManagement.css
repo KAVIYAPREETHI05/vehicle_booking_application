@@ -1,238 +1,302 @@
-
 .driver-management-page {
-padding: 30px;
-background: #f4f7fb;
-min-height: 100vh;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 30px;
+  background: #f4f7fb;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .main-content {
-max-width: 1100px;
-margin: 0 auto;
-margin-left: 250px;
-margin-top:50px;
+  max-width: 1100px;
+  margin: 0 auto;
+  margin-left: 250px;
+  margin-top: 50px;
 }
 
 .table-container {
-background: #ffffff;
-padding: 25px;
-border-radius: 12px;
-box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  width: 100%; /* Fixed: Changed from 500% to 100% */
+  overflow-x: auto; /* Added for horizontal scroll if needed */
 }
 
 .table-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
 }
 
 .table-header h2 {
-margin: 0;
-font-size: 22px;
-color: #333;
+  margin: 0;
+  font-size: 22px;
+  color: #333;
 }
 
 /* ===========================
 Add Driver Button
 =========================== */
 .add-driver-btn {
-background: #3498db;
-color: #fff;
-font-size: 15px;
-padding: 10px 18px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-transition: 0.2s ease;
+  background: #3498db;
+  color: #fff;
+  font-size: 15px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .add-driver-btn:hover {
-background: #2d89c6;
+  background: #2d89c6;
 }
 
 /* ===========================
-Drivers Table
+Drivers Table - FIXED ALIGNMENT
 =========================== */
 .drivers-table {
-width: 70%;
-border-collapse: collapse;
+  width: 100%; /* Fixed: Changed from 70% to 100% */
+  border-collapse: collapse;
+  table-layout: fixed; /* Added for consistent column widths */
 }
 
 .drivers-table th,
 .drivers-table td {
-border: 1px solid #e0e6ed;
-padding: 12px;
-text-align: center;
-font-size: 15px;
+  border: 1px solid #e0e6ed;
+  padding: 12px;
+  text-align: center;
+  font-size: 15px;
+  word-wrap: break-word; /* Added for long content */
+}
+
+/* Fixed column widths for proper alignment */
+.drivers-table th:nth-child(1), /* Driver ID */
+.drivers-table td:nth-child(1) {
+  width: 12%;
+}
+
+.drivers-table th:nth-child(2), /* Name */
+.drivers-table td:nth-child(2) {
+  width: 18%;
+}
+
+.drivers-table th:nth-child(3), /* Email */
+.drivers-table td:nth-child(3) {
+  width: 22%;
+}
+
+.drivers-table th:nth-child(4), /* Phone */
+.drivers-table td:nth-child(4) {
+  width: 12%;
+}
+
+.drivers-table th:nth-child(5), /* Experience */
+.drivers-table td:nth-child(5) {
+  width: 10%;
+}
+
+.drivers-table th:nth-child(6), /* Status */
+.drivers-table td:nth-child(6) {
+  width: 14%;
+}
+
+.drivers-table th:nth-child(7), /* Actions */
+.drivers-table td:nth-child(7) {
+  width: 12%;
 }
 
 .drivers-table th {
-background: #f0f3f8;
-font-weight: 600;
-color: #333;
+  background:#0066cc;
+  font-weight: 600;
+  color: #333;
 }
 
 .drivers-table tr:nth-child(even) {
-background: #fafafa;
+  background: #fafafa;
 }
 
 .driver-empty-state {
-text-align: center;
-padding: 20px;
-color: #888;
-font-style: italic;
+  text-align: center;
+  padding: 20px;
+  color: #888;
+  font-style: italic;
 }
 
 /* ===========================
 Status Select
 =========================== */
 .driver-status-select {
-padding: 6px 8px;
-border: 1px solid #d1d5db;
-border-radius: 6px;
-font-size: 14px;
-background: #fff;
-cursor: pointer;
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+  width: 100%; /* Added for consistent sizing */
+  max-width: 120px; /* Added limit */
 }
 
 /* ===========================
 Delete Button
 =========================== */
 .driver-delete-btn {
-background: #e74c3c;
-color: #fff;
-font-size: 14px;
-padding: 6px 12px;
-border: none;
-border-radius: 6px;
-cursor: pointer;
-transition: 0.2s ease;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 14px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap; /* Prevent button text wrapping */
 }
 
 .driver-delete-btn:hover {
-background: #c0392b;
+  background: #c0392b;
 }
 
 /* ===========================
 Modal Styling
 =========================== */
 .driver-modal-overlay {
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.6);
-display: flex;
-align-items: center;
-justify-content: center;
-z-index: 50;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
 }
 
 .driver-modal-content {
-background: #fff;
-padding: 25px;
-border-radius: 12px;
-width: 500px;
-max-width: 95%;
-box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-animation: slideDown 0.3s ease;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 95%;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  animation: slideDown 0.3s ease;
 }
 
 .driver-modal-close {
-background: transparent;
-border: none;
-font-size: 26px;
-font-weight: bold;
-color: #666;
-cursor: pointer;
-transition: 0.2s;
+  background: transparent;
+  border: none;
+  font-size: 26px;
+  font-weight: bold;
+  color: #666;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
 .driver-modal-close:hover {
-color: #222;
+  color: #222;
 }
 
 /* ===========================
 Form Styling
 =========================== */
 .driver-form-group {
-margin-bottom: 16px;
-text-align: left;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
 .driver-form-group label {
-display: block;
-font-size: 14px;
-font-weight: 600;
-margin-bottom: 6px;
-color: #333;
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
 }
 
 .driver-form-group input,
 .driver-form-group select {
-width: 100%;
-padding: 10px;
-border: 1px solid #d1d5db;
-border-radius: 6px;
-font-size: 14px;
-transition: border 0.2s ease;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s ease;
+  box-sizing: border-box; /* Added for proper sizing */
 }
 
 .driver-form-group input:focus,
 .driver-form-group select:focus {
-outline: none;
-border-color: #3498db;
+  outline: none;
+  border-color: #3498db;
 }
 
 /* ===========================
 Form Actions
 =========================== */
 .driver-form-actions {
-display: flex;
-justify-content: flex-end;
-gap: 12px;
-margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .driver-btn-primary {
-background: #2ecc71;
-color: #fff;
-padding: 10px 18px;
-font-size: 15px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-transition: 0.2s ease;
+  background: #2ecc71;
+  color: #fff;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .driver-btn-primary:hover {
-background: #27ae60;
+  background: #27ae60;
 }
 
 .driver-btn-secondary {
-background: #bdc3c7;
-color: #333;
-padding: 10px 18px;
-font-size: 15px;
-border: none;
-border-radius: 8px;
-cursor: pointer;
-transition: 0.2s ease;
+  background: #bdc3c7;
+  color: #333;
+  padding: 10px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
 .driver-btn-secondary:hover {
-background: #95a5a6;
+  background: #95a5a6;
 }
 
 /* ===========================
 Animations
 =========================== */
 @keyframes slideDown {
-from {
-transform: translateY(-20px);
-opacity: 0;
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
 }
-to {
-transform: translateY(0px);
-opacity: 1;
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    margin-top: 20px;
+  }
+  
+  .table-container {
+    padding: 15px;
+  }
+  
+  .drivers-table {
+    font-size: 14px;
+  }
+  
+  .drivers-table th,
+  .drivers-table td {
+    padding: 8px 10px;
+  }
 }
-} 
